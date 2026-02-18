@@ -65,8 +65,8 @@ class AvatarViewer {
         // Ground plane
         this.setupGround();
         
-        // Load default model or create placeholder
-        this.loadModel('/static/models/avatar.glb');
+        // Load default model
+        this.loadModelWithFallback('robot');
         
         // Start polling for state changes
         this.startPolling();
