@@ -161,41 +161,14 @@ class AvatarViewer {
         // Add model to scene first
         this.scene.add(this.currentModel);
         
-        // Reset transform
+        // Keep model at original scale and position at origin
         this.currentModel.scale.set(1, 1, 1);
         this.currentModel.position.set(0, 0, 0);
         
-        // Calculate bounding box and auto-fit camera
-        const box = new THREE.Box3().setFromObject(this.currentModel);
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-        
-        // Normalize model to ~2 units tall
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const targetSize = 2;
-        const scale = targetSize / maxDim;
-        this.currentModel.scale.setScalar(scale);
-        
-        // Recalculate after scaling
-        box.setFromObject(this.currentModel);
-        box.getCenter(center);
-        box.getSize(size);
-        
-        // Center model horizontally and place feet on ground
-        this.currentModel.position.x = -center.x;
-        this.currentModel.position.y = -box.min.y;
-        this.currentModel.position.z = -center.z;
-        
-        // Position camera to frame the model
-        const fov = this.camera.fov * (Math.PI / 180);
-        const cameraZ = (size.y / 2) / Math.tan(fov / 2) * 1.5;
-        const cameraY = size.y / 2;
-        
-        this.camera.position.set(0, cameraY, cameraZ);
-        this.controls.target.set(0, cameraY, 0);
+        // Set camera to view the model (works well for most humanoid models)
+        this.camera.position.set(0, 2, 7);
+        this.controls.target.set(0, 1.5, 0);
         this.controls.update();
-        
-        console.log('Model scaled to:', scale, 'Camera at z:', cameraZ);
         
         // Setup animations
         if (gltf.animations && gltf.animations.length > 0) {
